@@ -160,8 +160,6 @@ export function CertificateList() {
                             }}
                         >
                             {certificate.nama_kursus}
-
-
                         </div>
                         <div
                             style={{
