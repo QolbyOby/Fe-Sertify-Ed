@@ -1,5 +1,5 @@
 import heroImg from '../../assets/hero_section.png';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Button } from '../../components/ui/button';
 
 export default function HomePage() {
