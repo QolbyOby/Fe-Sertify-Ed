@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import useAuth from "@/hooks/use-auth";
 
 export default function SigninPage() {
     const navigate = useNavigate();
@@ -17,40 +18,36 @@ export default function SigninPage() {
         setLoading(true);
 
         try {
-            const response = await fetch("https://sertifyed-seven.vercel.app/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
+            const response = await useAuth("login", {
+                email: email,
+                password: password,
             });
 
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.message || "Email atau password salah!");
+            if (!response || !response.data) {
+                throw new Error("Invalid response from server");
             }
+
+            const result = response.data;
+
+            console.log("Login successful:", result);
+            
 
             // Buat objek currentUser baru dari data API dan input form
             // Karena API tidak mengembalikan nama, kita gunakan email sebagai nama sementara
-            const currentUserData = {
-                name: email, // Menampilkan email di sidebar
-                email: email,
-                accessToken: result.data.accessToken,
-                refreshToken: result.data.refreshToken,
-                // Properti lain diisi string kosong agar sesuai dengan tipe data User
-                password: '',
-                institutionName: '',
-                address: '',
-                ethereumAddress: ''
-            };
-
-            // Simpan data sesi pengguna ke localStorage
-            localStorage.setItem("currentUser", JSON.stringify(currentUserData));
+            // const currentUserData = {
+            //     name: email, // Menampilkan email di sidebar
+            //     email: email,
+            //     accessToken: result.data.accessToken,
+            //     refreshToken: result.data.refreshToken,
+            //     // Properti lain diisi string kosong agar sesuai dengan tipe data User
+            //     password: '',
+            //     institutionName: '',
+            //     address: '',
+            //     ethereumAddress: ''
+            // };
 
             // Arahkan ke dashboard
             navigate("/dashboard/layout-editor");
-
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : "Terjadi kesalahan";
             alert(errorMessage);

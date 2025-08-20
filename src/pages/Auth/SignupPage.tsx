@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router-dom"
 import type { User } from "../../type/User"
+import useAuth from "@/hooks/use-auth"
 
 export default function SignupPage() {
     const navigate = useNavigate()
@@ -25,18 +26,21 @@ export default function SignupPage() {
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
 
-        const users: User[] = JSON.parse(localStorage.getItem("users") || "[]")
+        const response =  useAuth("register", {
+            email: form.email,
+            password: form.password,
+            name: form.name,
+            institutionName: form.institutionName,
+            address: form.address,
+            ethereumAddress: form.ethereumAddress,
+        })
 
-        if (users.find((u) => u.email === form.email)) {
-            alert("Email sudah terdaftar!")
+        if (!response) {
+            alert("Sign up gagal! Silakan coba lagi.")
             return
         }
-
-        users.push(form)
-        localStorage.setItem("users", JSON.stringify(users))
-
-        alert("Sign up berhasil! Silakan login.")
-        navigate("/signin")
+        
+        // navigate("/signin")
     }
 
     return (
