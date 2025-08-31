@@ -12,6 +12,7 @@ export default function SigninPage() {
     const [email, setEmail] = useState<string>(""); // Default value for easier testing
     const [password, setPassword] = useState<string>(""); // Default value for easier testing
     const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -25,6 +26,7 @@ export default function SigninPage() {
 
             if (!response || !response.data) {
                 throw new Error("Invalid response from server");
+                setError(response.data.message || "Login failed");
             }
 
             const result = response.data;

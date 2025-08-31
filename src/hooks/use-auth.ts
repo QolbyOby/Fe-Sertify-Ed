@@ -9,30 +9,41 @@ export interface AuthPayload {
   ethereumAddress?: string;
 }
 
-const useAuth = (auth: string, payload: AuthPayload) => {
+const useAuth = async (auth: string, payload: AuthPayload) => {
   const urlApi = import.meta.env.VITE_API_URL;
 
   try {
     switch (auth) {
       case "login":
-        return axios.post(`${urlApi}/auth/login`, payload, {
+        let res = await axios.post(`${urlApi}/auth/login`, payload, {
           headers: {
             "Content-Type": "application/json",
           },
           withCredentials: true, // Include credentials for CORS requests
         });
-      case "register":
-        return axios.post(`${urlApi}/auth/register`, payload, {
+        return res.data;
+      case "register-user":
+        res = await axios.post(`${urlApi}/auth/register/user`, payload, {
           headers: {
             "Content-Type": "application/json",
           },
           withCredentials: true, // Include credentials for CORS requests
         });
+        return res.data;
+      case "register-institution":
+        res = await axios.post(`${urlApi}/auth/register/institution`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Include credentials for CORS requests
+        });
+        return res.data;
       default:
         throw new Error("Invalid auth action");
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error occurred during authentication:", error);
+    return error.response?.data || { success: false, message: "Internal server error" };
   }
 };
 
